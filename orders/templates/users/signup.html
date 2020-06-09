@@ -1,0 +1,31 @@
+{% extends "users/base.html" %}
+{% block body %}
+<h1 class="text-center">Sign Up</h1>
+
+<div class="card mx-auto my-5" style="max-width: 667px;">
+
+  {% if message %}
+  <div class="alert alert-info text-center" role="alert">
+    {{ message }}
+  </div>
+  {% endif %}
+  <form action="{% url 'signup' %}" method="post" class="form-group card-body">
+    <div>
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}<br>
+        {{ field }}
+
+        {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+        <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endfor %}
+      <button value="submit" type="submit" class="btn btn-primary">Sign Up</button>
+  </form>
+</div>
+{% endblock %}
