@@ -1,0 +1,104 @@
+{% extends "../users/base.html" %}
+
+{% block body %}
+<!-- <h1>Hello, {{ user.first_name }}</h1>
+<ul>
+    <li>Currently logged in as: {{ user.username }}</li>
+    <li><a href="{% url 'logout' %}">Logout</a></li>
+</ul> -->
+<main>
+    <h2 class="display-4 text-center my-4">Our Menu</h4>
+        <div class="card" style="padding: 40px;">
+            {% if regular_pizzas %}
+            <h3 class="card-title text-center mb-3" style="color:green">Our Regular Pizzas</h3>
+            <div class="row">
+                {% for pizza in regular_pizzas %}
+                <!-- {%if pizza.type == 'Regular' %}
+            <h6>Regular Pizza</h6>
+            {% endif %} -->
+                <div class="col-sm-6">
+                    <div class="card shadow">
+                        <div class="card-body row justify-content-between">
+                            <div class="column" style="width: 40%">
+                                <h5 class="card-title">{{pizza.name}}</h5>
+                                <p class="card-text">{{pizza.size}} size</p>
+                            </div>
+                            <!-- <div class="column" style="width: 50%"> -->
+                            <h4 class="card-text align-self-center">${{pizza.price}}</h4>
+                            <a href="#" class="btn btn-success align-self-center">Buy</a>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Special title treatment</h5>
+                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div> -->
+                {% endfor %}
+                {%endif%}
+            </div>
+            {% if sicilian_pizzas %}
+            <h3 class="card-title text-center my-3" style="color:green">Our Sicilian Pizzas</h3>
+            <div class="row">
+                {% for pizza in sicilian_pizzas %}
+                <!-- {%if pizza.type == 'Regular' %}
+                <h6>Regular Pizza</h6>
+                {% endif %} -->
+                <div class="col-sm-6">
+                    <div class="card shadow">
+                        <div class="card-body row justify-content-between">
+                            <div class="column" style="width: 40%">
+                                <h5 class="card-title">{{pizza.name}}</h5>
+                                <p class="card-text">{{pizza.size}} size</p>
+                            </div>
+                            <!-- <div class="column" style="width: 50%"> -->
+                            <h4 class="card-text align-self-center">${{pizza.price}}</h4>
+                            <button class="btn btn-success align-self-center">Buy</button>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-sm-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Special title treatment</h5>
+                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                        </div>
+                    </div>
+                </div> -->
+                {% endfor %}
+                {%endif%}
+            </div>
+
+        </div>
+
+
+
+        <!-- 
+        <ul class="list-group shadow">
+            {%for pizza in pizzas %}
+            <li class="list-group-item">
+                <div class="media align-items-lg-center flex-column flex-lg-row p-3">
+                    <div class="media-body order-2 order-lg-1">
+                        <h5 class="mt-0 font-weight-bold mb-2">{{pizza.name}}</h5>
+                        <p class="font-italic text-muted mb-0 small">Lorem ipsum dolor sit amet, consectetur adipisicing
+                            elit.
+                            Suscipit fuga autem maiores necessitatibus.</p>
+                        <div class="d-flex align-items-center justify-content-between mt-1">
+                            <h6 class="font-weight-bold my-2">${{pizza.price}}</h6>
+
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {%endfor%}
+        </ul> -->
+
+</main>
+{% endblock %}

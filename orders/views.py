@@ -4,15 +4,18 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from .models import Pizza
 # Create your views here.
 
 def index(request):
     if not request.user.is_authenticated:
         return render(request, "users/login.html", {"message": None})
     context = {
-        "user": request.user
+        "user": request.user,
+        "regular_pizzas": Pizza.objects.filter(type="Regular"),
+        "sicilian_pizzas": Pizza.objects.filter(type="Sicilian")
     }
-    return render(request, "users/home.html", context)
+    return render(request, "orders/home.html", context)
 
 def signup_view(request):
     if request.method == "POST":
