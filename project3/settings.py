@@ -32,7 +32,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'orders.apps.OrdersConfig',
-    # 'orders.apps.OrdersConfig'
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
