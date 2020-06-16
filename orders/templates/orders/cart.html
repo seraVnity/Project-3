@@ -1,0 +1,33 @@
+{% extends "../users/base.html" %}
+{%block body%}
+<main>
+  {% if orders %}
+  <h2 class="display-4 text-center my-4">Your cart</h4>
+    <div class="card" style="padding: 40px;">
+      {% for order in orders %}
+      <!-- <div class="row"> -->
+      <div class="col-sm-12">
+        <div class="card shadow">
+          <div class="card-body row justify-content-between">
+            <!-- <div  style="width: 40%"> -->
+            <h5 class="card-text mb-0 align-self-center">{{order.product.name}}</h5>
+            <div class="card-text align-self-center">{{order.product.type}}</div>
+            <div class="card-text align-self-center">{{order.product.size}} size</div>
+            <div><b>Toppings: </b>
+              {% for topping in order.toppings.all %}
+              <div class="card-text align-self-center">{{topping}}</div>
+              {% endfor %}
+            </div>
+            <div class="card-text align-self-center">Quantity: {{order.quantity}}</div>
+            <h5 class="card-text align-self-center">$ {{order.product.price}}</h5>
+          </div>
+        </div>
+      </div>
+      <!-- </div> -->
+      {%endfor%}
+    </div>
+    {%else%}
+    <h2 class="display-4 text-center my-4">Your cart is empty</h4>
+      {%endif%}
+</main>
+{%endblock%}

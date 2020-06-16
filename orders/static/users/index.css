@@ -10,7 +10,7 @@ ul {
   list-style-type: none;
 }
 a {
-  color: white
+  color: white!important;
 }
 a:hover {
   color: rgba(250, 86, 103, 0.836)!important;
