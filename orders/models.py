@@ -4,11 +4,11 @@ from django.conf import settings
 
 # Create your models here.
 class Product(models.Model):
-  
     NULL = 'None'
     SM = 'Small'
     LG = 'Large'
     SIZE = [(NULL, 'None'), (SM, 'Small'), (LG, 'Large')]
+
     size = models.CharField(max_length=6, choices=SIZE, default=NULL)
     name = models.CharField(max_length=64)
     type = models.CharField(max_length=64)
@@ -37,12 +37,8 @@ class Pizza(models.Model):
 
     product = models.OneToOneField(Product, on_delete=models.CASCADE,
         primary_key=True,)
-    # type = models.CharField(max_length=64)
-    # size = models.CharField(
-    #     max_length=6, choices=SIZE, default=SM)
     toppings_number = models.IntegerField(
         choices=TOPPINGS_NUMBER, default=ZERO)
-    # toppings = models.ManyToManyField(Topping)
 
     def __str__(self):
         return f"{self.toppings_number}"
@@ -52,21 +48,8 @@ class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
     order_date = models.DateTimeField(auto_now_add=True, null=True)
     active = models.BooleanField(default=False)
-    # order = models.ForeignKey(DetailedOrder, on_delete=models.CASCADE)
-
-    # def add_to_cart(self, product_id):
-    #     book = Product_id.objects.get(pk=product_id)
-    #     try:
-    #         preexisting_order = DetailedOrder.objects.get(book=book, cart=self)
-    #         preexisting_order.quantity += 1
-    #         preexisting_order.save()
-    #     except DetailedOrder.DoesNotExist:
-    #         new_order = DetailedOrder.objects.create(
-    #             product=product,
-    #             cart=self,
-    #             quantity=1
-    #             )
-    #         new_order.save()
+    placed = models.BooleanField(default=False)
+    total = models.FloatField(default=0)
 
     def __str__(self):
         return f"{self.user} on {self.order_date}"
@@ -79,7 +62,14 @@ class DetailedOrder(models.Model):
 
     def __str__(self):
         return f"{self.product} in {self.quantity} quantity has {self.toppings.count()} cart {self.cart}"
-
+    
+    def toList(self):
+        list = []
+        print("from toList function")
+        for topping in self.toppings.all():
+            list.append(topping.name)
+        print(list)
+        return list
     # class Sub(models.Model):
 #     # SM = 'Small'
 #     # LG = 'Large'

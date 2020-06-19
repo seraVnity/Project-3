@@ -33,7 +33,7 @@
                 <a href="{% url 'index' %}" class="nav-link">{{user}}</a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'cart' %}" class="nav-link"><span style='font-size:1rem;'>&#128722; </span> Cart</a>
+                <a href="{% url 'cart' %}" class="nav-link"><span style='font-size:1rem;'>&#128722; </span> Cart <span class="badge badge-danger badge-pill">{{counter}}</span></a>
             </li>
             <li class="nav-item">
                 <a href="{% url 'logout' %}" class="nav-link">Log Out</a>

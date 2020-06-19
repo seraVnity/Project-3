@@ -15,11 +15,22 @@ def index(request):
 
     pizzas = Product.objects.values(
         'id', 'name', 'type', 'size', 'price', 'pizza__toppings_number')
+
+    cart = get_or_none(Cart, user=request.user, active=True)
+    orders = DetailedOrder.objects.filter(cart=cart)
+    counter = 0
+    if orders:
+        for order in orders: 
+            counter += order.quantity
+
+    print(counter)
     context = {
         "user": request.user,
         "toppings": Topping.objects.all(),
         "regular_pizzas": pizzas.filter(type="Pizza Regular"),
-        "sicilian_pizzas": pizzas.filter(type="Pizza Sicilian")
+        "sicilian_pizzas": pizzas.filter(type="Pizza Sicilian"),
+        "products": Product.objects.all(),
+        "counter": counter
     }
     return render(request, "orders/home.html", context)
 
@@ -57,51 +68,93 @@ def logout_view(request):
     logout(request)
     return render(request, "users/login.html", {"message": "Logged out."})
 
+
 @login_required
 def cart(request):
     if request.method == "GET":
         # products = DetailedOrder.objects.values('product__name','product__size', 'product__type', 'product__price', 'toppings', 'quantity' )
+        cart = get_or_none(Cart, user=request.user, active=True)
+        orders = DetailedOrder.objects.filter(cart=cart)
+        print("cart", cart, "order", orders)
+        if cart:
+            total = 0
+            for order in orders:
+                if order.quantity == 0:
+                    total += order.product.price
+                else:
+                    price = order.product.price * order.quantity
+                    total += price
+            cart.total = total
 
-        print(products)
         context = {
-            "cart": Cart.objects.all(),
-            "orders": DetailedOrder.objects.all()
+            "cart": cart,
+            "orders": orders,
         }
         return render(request, "orders/cart.html", context)
+
 
 @login_required
 def add_to_cart(request, product_id):
     if request.method == "POST":
+        print(product_id)
         product = get_object_or_404(Product, id=product_id)
-        cart,created = Cart.objects.get_or_create(user=request.user, active = True)
-        order,created = DetailedOrder.objects.get_or_create(product=product,cart=cart)
-        order.quantity += 1
-        order.save()
+        print(product)
+        cart, created = Cart.objects.get_or_create(
+            user=request.user, active=True)
 
         toppings = request.POST.getlist('toppings')
         print(toppings)
         if toppings:
+            # check there is no such products with these toppings in the order
+            orders = get_or_none(DetailedOrder, product=product)
+            print("enter to toppings")
+            if orders:
+                print("enter to orders")
+                for exist_order in orders:
+                    print(exist_order, "from exist order")
+                    list = exist_order.toList()
+                    # if this topping list already exists in orders increase order quantity
+                    print("list", list)
+                    print("toppings", toppings)
+                    print(toppings == list)
+                    if list == toppings:
+                        exist_order.quantity += 1
+                        exist_order.save()
+                        return HttpResponseRedirect(reverse("cart"))
+
+            print("after for ------------ 98")
+            new_order = DetailedOrder.objects.create(
+                product=product, cart=cart)
             for topping in toppings:
                 top = Topping.objects.get(name=topping)
-                order.toppings.add(top)
+                new_order.toppings.add(top)
+            print(new_order, "------ 101")
+            new_order.quantity += 1
+            new_order.save()
 
-                print(topping, "91")
-            print(order.toppings.all())    
-        # else:
-        #     print("from POST cart view.py file")
-        #     order,created = DetailedOrder.objects.get_or_create(product=product,cart=cart)
-         
-        
-        return HttpResponseRedirect(reverse("cart"))
+        else:
+            order, created = DetailedOrder.objects.get_or_create(
+                product=product, cart=cart)
+            order.quantity += 1
+            order.save()
+            print(order, "from add to cart -------114")
 
-# def add_to_cart(request, product_id):
-#     print("Hi from add to cart")
-#     product_id = int(product_id)
-#     product = get_object_or_404(Product, pk=product_id)
-#     print(product, "36")
-#     cart,created = Cart.objects.get_or_create(user=request.user, active=True)
-#     order,created = DetailedOrder.objects.get_or_create(product=product)
-#     order.quantity += 1
-#     order.save()
-#     messages.success(request, "Cart updated!")
-#     return HttpResponse("Hello, world!")
+        return HttpResponseRedirect(reverse("index"))
+
+
+def confirm_order(request, cart_id):
+    cart = get_object_or_404(Cart, id=cart_id, active=True)
+    cart.active = False
+    cart.places = True
+    cart.save()
+    context = {
+        "cart": cart
+    }
+    return render(request, "orders/confirm.html", context)
+
+
+def get_or_none(classmodel, **kwargs):
+    try:
+        return classmodel.objects.get(**kwargs)
+    except classmodel.DoesNotExist:
+        return None

@@ -1,33 +1,90 @@
 {% extends "../users/base.html" %}
+{% load multiply %}
 {%block body%}
 <main>
+  {% if cart.active %}
   {% if orders %}
   <h2 class="display-4 text-center my-4">Your cart</h4>
     <div class="card" style="padding: 40px;">
       {% for order in orders %}
-      <!-- <div class="row"> -->
       <div class="col-sm-12">
-        <div class="card shadow">
+        <div class="card line">
           <div class="card-body row justify-content-between">
             <!-- <div  style="width: 40%"> -->
             <h5 class="card-text mb-0 align-self-center">{{order.product.name}}</h5>
             <div class="card-text align-self-center">{{order.product.type}}</div>
             <div class="card-text align-self-center">{{order.product.size}} size</div>
+            {% if order.toppings.all %}
             <div><b>Toppings: </b>
               {% for topping in order.toppings.all %}
               <div class="card-text align-self-center">{{topping}}</div>
               {% endfor %}
             </div>
+            {%else%}
+            <div>No Toppings</div>
+            {%endif%}
             <div class="card-text align-self-center">Quantity: {{order.quantity}}</div>
-            <h5 class="card-text align-self-center">$ {{order.product.price}}</h5>
+            <h5 class="card-text align-self-center">${{order.product.price |multiply:order.quantity }}</h5>
           </div>
         </div>
       </div>
-      <!-- </div> -->
       {%endfor%}
-    </div>
-    {%else%}
-    <h2 class="display-4 text-center my-4">Your cart is empty</h4>
-      {%endif%}
+      <div class="col-sm-12">
+        <div class="card line">
+          <div class="card-body row justify-content-between total">
+            <div class="card-text">Total</div>
+            <div class="card-text">${{cart.total|floatformat:2}}</div>
+          </div>
+        </div>
+      </div>
+      <a data-toggle="modal" data-target="#myModal{{cart.id}}" type="button"
+        class="modal-button btn btn-success align-self-center">Submit Your Order</a>
+
+      {%else%}
+      <h2 class="display-4 text-center my-4">Your cart is empty</h4>
+        {%endif%}
+        <div class="modal fade" id="myModal{{cart.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Please confirm your order</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <ul class="list-group">
+                  {% for order in orders %}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{order.product.size}} {{order.product.name}} {{order.product.type}}
+                    {%if order.toppings.all%}
+                    with 
+                    {% for topping in order.toppings.all %}
+                    {{topping}}
+                    {% endfor %}
+                    {%endif%}
+                    <span
+                      class="badge badge-primary badge-pill">${{order.product.price |multiply:order.quantity }}</span>
+                  </li>
+                </ul>
+                {%endfor%}
+                <li class="list-group-item d-flex justify-content-between align-items-center"><b>Total:
+                  ${{cart.total|floatformat:2}} </b></li>
+                <div class='row justify-content-center'>
+
+                  <a href="{%url 'cart' %}" type="button" class="modal-button btn btn-warning col-sm-3">Cancel</a>
+                  <form action="{%url 'confirm_order' cart.id%}" class="form col-sm-3" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="Buy" class="col-sm-12 btn btn-success align-self-center"></input>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {%else%}
+        <h2 class="display-4 text-center my-4">Your cart is empty</h4>
+        {%endif%}
+        {%endblock%}
 </main>
-{%endblock%}

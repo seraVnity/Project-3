@@ -15,3 +15,14 @@ a {
 a:hover {
   color: rgba(250, 86, 103, 0.836)!important;
 }
+.total {
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+.card.line {
+  border: none;
+  border-top: 1px solid rgba(0,0,0,.125);
+}
+.form {
+  padding: 0;
+}
