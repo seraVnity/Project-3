@@ -15,7 +15,7 @@ class Product(models.Model):
     price = models.FloatField()
 
     def __str__(self):
-        return f"{self.size} {self.type} of name {self.name} costs {self.price}"
+        return f"{self.size} {self.type} '{self.name}' costs {self.price}"
 
 class Topping(models.Model):
     name = models.CharField(max_length=64, null=True)
@@ -52,7 +52,7 @@ class Cart(models.Model):
     total = models.FloatField(default=0)
 
     def __str__(self):
-        return f"{self.user} on {self.order_date}"
+        return f"Order N{self.id} of {self.user} was created on {self.order_date}"
 
 class DetailedOrder(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -61,37 +61,13 @@ class DetailedOrder(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.product} in {self.quantity} quantity has {self.toppings.count()} cart {self.cart}"
+        return f"{self.quantity} {self.product} has {self.toppings.count()} toppings cart N{self.cart.id}"
     
     def toList(self):
         list = []
-        print("from toList function")
         for topping in self.toppings.all():
             list.append(topping.name)
-        print(list)
         return list
-    # class Sub(models.Model):
-#     # SM = 'Small'
-#     # LG = 'Large'
-#     # SIZE = [(SM, 'Small'), (LG, 'Large')]
 
-#     # size = models.CharField(max_length=6, choices=SIZE, default=SM)
-#     product = models.OneToOneField(Product, on_delete=models.CASCADE,
-#         primary_key=True,)
-#     def __str__(self):
-#         return f"{self.name} {self.size} costs {self.price}"
-
-
-# class DinnerPlates(models.Model):
-#     # SM = 'Small'
-#     # LG = 'Large'
-#     # SIZE = [(SM, 'Small'), (LG, 'Large')]
-
-#     # size = models.CharField(max_length=6, choices=SIZE, default=SM)
-#     product = models.OneToOneField(Product, on_delete=models.CASCADE,
-#         primary_key=True,)
-
-#     def __str__(self):
-#         return f"{self.name} {self.size} costs {self.price}"
 
 

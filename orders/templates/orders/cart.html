@@ -11,27 +11,28 @@
         <div class="card line">
           <div class="card-body row justify-content-between">
             <!-- <div  style="width: 40%"> -->
-            <h5 class="card-text mb-0 align-self-center">{{order.product.name}}</h5>
-            <div class="card-text align-self-center">{{order.product.type}}</div>
-            <div class="card-text align-self-center">{{order.product.size}} size</div>
+            <h5 class="card-text col-sm-2 mb-0">{{order.product.name}}</h5>
+            <div class="card-text col-sm-2">{{order.product.type}}</div>
+            <div class="card-text col-sm-1 px-0">{{order.product.size}}</div>
             {% if order.toppings.all %}
-            <div><b>Toppings: </b>
+            <div class="card-text align-self-center col-sm-2"><b>Toppings: </b>
               {% for topping in order.toppings.all %}
-              <div class="card-text align-self-center">{{topping}}</div>
+              <div class="card-text ">{{topping}}</div>
               {% endfor %}
             </div>
             {%else%}
-            <div>No Toppings</div>
+            <div class="card-text col-sm-2">No Toppings</div>
             {%endif%}
-            <div class="card-text align-self-center">Quantity: {{order.quantity}}</div>
-            <h5 class="card-text align-self-center">${{order.product.price |multiply:order.quantity }}</h5>
+            <div class="card-text col-sm-2">Quantity: {{order.quantity}}</div>
+            <h5 class="card-text col-sm-2">${{order.product.price |multiply:order.quantity }}</h5>
+            <a href="{% url 'remove_from_cart' order.id %}" type="button" class= "col-sm-1 "><span style='font-size:16px;'>&#128465;</span></a>
           </div>
         </div>
       </div>
       {%endfor%}
       <div class="col-sm-12">
         <div class="card line">
-          <div class="card-body row justify-content-between total">
+          <div class="card-body row justify-content-around total">
             <div class="card-text">Total</div>
             <div class="card-text">${{cart.total|floatformat:2}}</div>
           </div>
