@@ -18,6 +18,9 @@ a:hover {
 .card-title.p-title {
   color: green;
 }
+.card-title.p-title:not(:first-child) {
+  padding-top: 20px;
+}
 .total {
   font-weight: 600;
   font-size: 1.25rem;

@@ -10,10 +10,14 @@
       <div class="col-sm-12">
         <div class="card line">
           <div class="card-body row justify-content-between">
-            <!-- <div  style="width: 40%"> -->
             <h5 class="card-text col-sm-2 mb-0">{{order.product.name}}</h5>
             <div class="card-text col-sm-2">{{order.product.type}}</div>
+            {%if not order.product.size == 'None' %}
             <div class="card-text col-sm-1 px-0">{{order.product.size}}</div>
+            {%else%}
+            <div class="card-text col-sm-1 px-0">No size</div>
+
+            {%endif%}
             {% if order.toppings.all %}
             <div class="card-text align-self-center col-sm-2"><b>Toppings: </b>
               {% for topping in order.toppings.all %}

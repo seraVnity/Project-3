@@ -52,7 +52,10 @@ class Cart(models.Model):
     total = models.FloatField(default=0)
 
     def __str__(self):
-        return f"Order N{self.id} of {self.user} was created on {self.order_date}"
+        if self.placed:
+            return f"Placed Order N{self.id} of {self.user}"
+        else:
+            return f"Active Order N{self.id} of {self.user} was created on {self.order_date}"
 
 class DetailedOrder(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)

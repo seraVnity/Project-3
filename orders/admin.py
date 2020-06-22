@@ -5,6 +5,7 @@ from .models import Product, Pizza, Topping, Cart, DetailedOrder
 
 class DetailedOrderInline(admin.TabularInline):
     model = DetailedOrder
+    extra = 0
 
 class CartAdmin(admin.ModelAdmin):
     inlines = [DetailedOrderInline]
@@ -15,8 +16,6 @@ class PizzaInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
     inlines = [PizzaInline]
 
-# class DetailedOrderAdmin(admin.ModelAdmin):
-#     filter_horizontal = ("carts",)
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Pizza)

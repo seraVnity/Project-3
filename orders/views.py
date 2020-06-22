@@ -13,10 +13,9 @@ def index(request):
     if not request.user.is_authenticated:
         return render(request, "users/login.html", {"message": None})
 
-    pizzas = Product.objects.values(
+    products = Product.objects.values(
         'id', 'name', 'type', 'size', 'price', 'pizza__toppings_number')
 
-    products = Product.objects.all()
 
     cart = get_or_none(Cart, user=request.user, active=True)
     orders = DetailedOrder.objects.filter(cart=cart)
@@ -25,15 +24,13 @@ def index(request):
         for order in orders:
             counter += order.quantity
 
+    types = Product.objects.order_by('-type').values('type').distinct()
+
     context = {
         "user": request.user,
         "toppings": Topping.objects.all(),
-        "regular_pizzas": pizzas.filter(type="Pizza Regular"),
-        "sicilian_pizzas": pizzas.filter(type="Pizza Sicilian").order_by('name'),
-        "subs": pizzas.filter(type="Sub"),
-        "pastas": pizzas.filter(type="Pasta"),
-        "salads": pizzas.filter(type="Salad"),
-
+        "types": types,
+        "products": products.order_by('name'),
         "counter": counter
     }
     return render(request, "orders/home.html", context)
@@ -76,10 +73,8 @@ def logout_view(request):
 @login_required
 def cart(request):
     if request.method == "GET":
-        # products = DetailedOrder.objects.values('product__name','product__size', 'product__type', 'product__price', 'toppings', 'quantity' )
         cart = get_or_none(Cart, user=request.user, active=True)
         orders = DetailedOrder.objects.filter(cart=cart)
-        print("----from CART---", "cart", cart, "order", orders)
         if cart:
             total = 0
             for order in orders:
@@ -105,11 +100,11 @@ def add_to_cart(request, product_id):
             user=request.user, active=True)
 
         toppings = request.POST.getlist('toppings')
+        print(toppings)
         if toppings:
             # check there is no such products with these toppings in the order
             orders = get_or_none(DetailedOrder, product=product)
             if orders:
-                print(orders, "----orders----")
                 for exist_order in orders:
                     list = exist_order.toList()
                     # if this topping list already exists in orders increase order quantity
@@ -121,6 +116,7 @@ def add_to_cart(request, product_id):
             new_order = DetailedOrder.objects.create(
                 product=product, cart=cart)
             for topping in toppings:
+                print(topping)
                 top = Topping.objects.get(name=topping)
                 new_order.toppings.add(top)
             new_order.quantity += 1
@@ -137,15 +133,12 @@ def add_to_cart(request, product_id):
 @login_required
 def remove_from_cart(request, order_id):
     order = get_object_or_404(DetailedOrder, id=order_id)
-    print(order)
     if order.quantity == 1:
         order.delete()
-        print("----quantity == 1, from remove cart")
 
     else:
         order.quantity -= 1
         order.save()
-        print(order, "----from remove cart")
 
     return HttpResponseRedirect(reverse("cart"))
 

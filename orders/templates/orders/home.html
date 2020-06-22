@@ -5,22 +5,26 @@
     <!-- Main content -->
     <h2 class="display-4 text-center my-4">Our Menu</h4>
         <div class="card" style="padding: 40px;">
-            {% if regular_pizzas %}
-            <h3 class="card-title text-center mb-3 p-title">Our Regular Pizzas</h3>
+            {% for type in types %}
+
+            <h3 class="card-title text-center mb-3 p-title">Our {{type.type}}s</h3>
             <div class="row">
-                {% for pizza in regular_pizzas %}
+
+            {% for product in products %}
+            {% if product.type == type.type %}
+
                 <div class="col-sm-6">
                     <div class="card shadow">
                         <div class="card-body row justify-content-between">
                             <div class="column" style="width: 40%">
-                                <h5 class="card-title">{{pizza.name}}</h5>
-                                <p class="card-text">{{pizza.size}} size</p>
+                                <h5 class="card-title">{{product.name}}</h5>
+                                <p class="card-text">{{product.size}} size</p>
                             </div>
-                            <h4 class="card-text align-self-center">${{pizza.price|floatformat:2 }}</h4>
+                            <h4 class="card-text ">${{product.price|floatformat:2 }}</h4>
 
                             <!-- ADD href to basket -->
-                            {%if pizza.pizza__toppings_number %}
-                            <div class="modal fade" id="myModal{{pizza.id}}" tabindex="-1" role="dialog"
+                            {%if product.pizza__toppings_number %}
+                            <div class="modal fade" id="myModal{{product.id}}" tabindex="-1" role="dialog"
                                 aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
@@ -33,17 +37,17 @@
                                         </div>
                                         <div class="modal-body">
                                             <div style="display: none" class="alert alert-warning" role="alert"
-                                                id="modal-alert{{pizza.id}}"></div>
-                                            <form action="{%url 'add_to_cart' pizza.id%}" method="post">
+                                                id="modal-alert{{product.id}}"></div>
+                                            <form action="{%url 'add_to_cart' product.id%}" method="post">
                                                 {% csrf_token %}
                                                 <!-- Default unchecked -->
                                                 {% for topping in toppings%}
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" class="custom-control-input"
-                                                        value={{topping.name}} name="toppings"
-                                                        id="{{topping.name}}{{pizza.id}}">
+                                                        value="{{topping.name}}" name="toppings"
+                                                        id="{{topping.name}}{{product.id}}">
                                                     <label class="custom-control-label"
-                                                        for="{{topping.name}}{{pizza.id}}">{{topping.name}}</label>
+                                                        for="{{topping.name}}{{product.id}}">{{topping.name}}</label>
                                                 </div>
                                                 {%endfor%}
                                                 <input type="submit" value="Buy"
@@ -54,155 +58,27 @@
                                     </div>
                                 </div>
                             </div>
-                            <a data-toggle="modal" data-target="#myModal{{pizza.id}}"
-                                data-topnum="{{pizza.pizza__toppings_number}}" data-pizzaid="{{pizza.id}}" type="button"
-                                class="modal-button btn btn-success align-self-center">Buy</a>
+                            <a data-toggle="modal" data-target="#myModal{{product.id}}"
+                                data-topnum="{{product.pizza__toppings_number}}" data-pizzaid="{{product.id}}" type="button"
+                                class="modal-button btn btn-success align-self-start">Buy</a>
                             {%else%}
-                            <form action="{% url 'add_to_cart' pizza.id %}" method="post">
+                            <form action="{% url 'add_to_cart' product.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="submit" value="Buy" class="btn btn-success align-self-center"></input>
                             </form>
-
                             {%endif%}
                         </div>
                     </div>
                 </div>
-                {% endfor %}
-                {%endif%}
-            </div>
-            {% if sicilian_pizzas %}
-            <h3 class="card-title text-center my-3 p-title" >Our Sicilian Pizzas</h3>
-            <div class="row">
-                {% for pizza in sicilian_pizzas %}
-                <div class="col-sm-6">
-                    <div class="card shadow">
-                        <div class="card-body row justify-content-between">
-                            <div class="column" style="width: 40%">
-                                <h5 class="card-title">{{pizza.name}}</h5>
-                                <p class="card-text">{{pizza.size}} size</p>
-                            </div>
-                            <h4 class="card-text align-self-center">${{pizza.price|floatformat:2 }}</h4>
 
-                            <!-- ADD href to basket -->
-                            {%if pizza.pizza__toppings_number %}
-                            <div class="modal fade" id="myModal{{pizza.id}}" tabindex="-1" role="dialog"
-                                aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Please choose toppings
-                                                for your pizza</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div style="display: none" class="alert alert-warning" role="alert"
-                                                id="modal-alert{{pizza.id}}"></div>
-                                            <form action="{%url 'add_to_cart' pizza.id%}" method="post">
-                                                {% csrf_token %}
-                                                <!-- Default unchecked -->
-                                                {% for topping in toppings%}
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input"
-                                                        value={{topping.name}} name="toppings"
-                                                        id="{{topping.name}}{{pizza.id}}">
-                                                    <label class="custom-control-label"
-                                                        for="{{topping.name}}{{pizza.id}}">{{topping.name}}</label>
-                                                </div>
-                                                {%endfor%}
-                                                <input type="submit" value="Buy"
-                                                    class="btn btn-success align-self-center"></input>
-                                            </form>
-                                        </div>
+            {%endif%}
+            {% endfor %}
+        </div>
 
-                                    </div>
-                                </div>
-                            </div>
-                            <a data-toggle="modal" data-target="#myModal{{pizza.id}}"
-                                data-topnum="{{pizza.pizza__toppings_number}}" data-pizzaid="{{pizza.id}}" type="button"
-                                class="modal-button btn btn-success align-self-center">Buy</a>
-                            {%else%}
-                            <form action="{% url 'add_to_cart' pizza.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Buy" class="btn btn-success align-self-center"></input>
-                            </form>
-
-                            {%endif%}
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                {%endif%}
-            </div>
-            {% if subs %}
-            <h3 class="card-title text-center my-3 p-title">Our Subs</h3>
-            <div class="row">
-                {% for sub in subs %}
-                <div class="col-sm-6">
-                    <div class="card shadow">
-                        <div class="card-body row justify-content-between">
-                            <div class="column" style="width: 40%">
-                                <h5 class="card-title">{{sub.name}}</h5>
-                                <p class="card-text">{{sub.size}} size</p>
-                            </div>
-                            <h4 class="card-text align-self-center">${{sub.price|floatformat:2 }}</h4>
-                            <form action="{% url 'add_to_cart' sub.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Buy" class="btn btn-success align-self-center"></input>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                {%endif%}
-            </div>
-            {% if pastas %}
-            <h3 class="card-title p-title text-center my-3">Our Pastas</h3>
-            <div class="row">
-                {% for pasta in pastas %}
-                <div class="col-sm-6">
-                    <div class="card shadow">
-                        <div class="card-body row justify-content-between">
-                            <div class="column" style="width: 40%">
-                                <h5 class="card-title">{{pasta.name}}</h5>
-                            </div>
-                            <h4 class="card-text align-self-center">${{pasta.price|floatformat:2 }}</h4>
-                            <form action="{% url 'add_to_cart' pasta.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Buy" class="btn btn-success align-self-center"></input>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                {%endif%}
-            </div>
-            {% if salads %}
-            <h3 class="card-title p-title text-center my-3">Our Salads</h3>
-            <div class="row">
-                {% for item in salads %}
-                <div class="col-sm-6">
-                    <div class="card shadow">
-                        <div class="card-body row justify-content-between">
-                            <div class="column" style="width: 40%">
-                                <h5 class="card-title">{{item.name}}</h5>
-                            </div>
-                            <h4 class="card-text align-self-center">${{item.price|floatformat:2 }}</h4>
-                            <form action="{% url 'add_to_cart' item.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="submit" value="Buy" class="btn btn-success align-self-center"></input>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-                {%endif%}
-            </div>
+            {% endfor %}
         </div>
 </main>
 <script>
-    // let toppings_number;
     let toppings_number;
     let pizza_id;
     let modal_buttons = document.querySelectorAll(".modal-button")
@@ -214,33 +90,22 @@
                 toppings_number = 0
             }
             pizza_id = Number(e.target.dataset.pizzaid)
-            console.log(toppings_number, "148")
-            console.log(pizza_id, "154")
             chooseTops()
-
         })
     })
-    // console.log(toppings_number, "150")
     const chooseTops = function () {
         $('input[type=checkbox]').change(function (e) {
-            console.log('choosetops')
             if ($('input[type=checkbox]:checked').length > toppings_number) {
-                console.log('165')
-
                 $(this).prop('checked', false)
                 $(`#modal-alert${pizza_id}`).html(`You can choose only ${toppings_number} toppings for this pizza.`).show()
-                // alert("allowed only 3");
             }
         })
     }
     const clear = function () {
-        console.log('------------- clear inputs')
         $(`#myModal${pizza_id}`).on('hidden.bs.modal', function (e) {
             $(`#modal-alert${pizza_id}`).hide()
             $('input:checkbox').removeAttr('checked');
         })
     }
-
-
 </script>
 {% endblock %}
